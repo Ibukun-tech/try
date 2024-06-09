@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  Database:
+    image: mongo
+    container_name: MongoDb
+    restart: always
+    ports:
+      - 2017:2017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=ibk
+      - MONGO_INITDB_ROOT_PASSWORD=secret
