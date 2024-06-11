@@ -2,6 +2,7 @@ package try
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -48,6 +49,19 @@ func (s *Server) RegisterHandler(w http.ResponseWriter, r *http.Request) error {
 			return err
 		}
 		return writeJsonHeader(w, http.StatusCreated, value)
+	}
+	return nil
+}
+func (s *Server) GetAllHandler(w http.ResponseWriter, r *http.Request) error {
+	if r.Method == http.MethodGet {
+		allLog, err := s.dbServices.List()
+		if err != nil {
+			allLogError := &errorApiHandle{
+				Error: errors.New("error in finding all logs"),
+			}
+			return writeJsonHeader(w, http.StatusBadGateway, allLogError)
+		}
+		return writeJsonHeader(w, http.StatusOK, allLog)
 	}
 	return nil
 }

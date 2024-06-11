@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,19 +20,29 @@ import (
 // like to send something to the database
 var handle http.Handler
 
+//	func authMiddlewareHandler(next http.Handler) http.HandlerFunc {
+//		return func(w http.ResponseWriter, r *http.Request) {
+//			w.Header().Set("authorizaton", "Bearer token")
+//			next.ServeHTTP(w, r)
+//		}
+//	}
 func init() {
+	fmt.Println("first run")
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer func() {
 		cancel()
 	}()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://ibk:secret@localhost:27017"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://ibk:secret@localhost:2017"))
+	fmt.Println(err)
 	if err != nil {
+		fmt.Println(err, "if there is error ")
 		os.Exit(1)
 	}
 	conn := try.NewMongoClient(client)
 	s := try.NewServer(conn)
 	m := mux.NewRouter()
 	m.HandleFunc("/", try.RunHandler(s.RegisterHandler))
+	m.HandleFunc("/getAll", try.RunHandler(s.GetAllHandler))
 	handle = m
 }
 

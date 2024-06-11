@@ -5,11 +5,11 @@ first:
 	 @echo "first running ......."
 convert:
 	 @echo "now converting into binary file........"
-	go build -o $(Bin) ./BinaryFile/.
+	go build -o $(Bin) ./cmd/.
 
-run:first convert
+run: convert
 	 @echo run file
-	go run ./BinaryFile/*.go
+	go run ./cmd/*.go
 
 up:	
 	@echo "Running docker ......"	
