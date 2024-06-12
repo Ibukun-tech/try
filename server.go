@@ -2,7 +2,7 @@ package try
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"net/http"
 )
 
@@ -24,14 +24,15 @@ func writeJsonHeader(w http.ResponseWriter, val int, v any) error {
 type handleFunc func(w http.ResponseWriter, r *http.Request) error
 
 type errorApiHandle struct {
-	Error error `json:"error"`
+	Error string `json:"error"`
 }
 
 func RunHandler(h handleFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := h(w, r); err != nil {
+			fmt.Println(err)
 			v := errorApiHandle{
-				Error: err,
+				Error: "big error",
 			}
 			writeJsonHeader(w, http.StatusBadRequest, v)
 		}
@@ -39,7 +40,8 @@ func RunHandler(h handleFunc) http.HandlerFunc {
 }
 
 func (s *Server) RegisterHandler(w http.ResponseWriter, r *http.Request) error {
-	if r.Method == "Post" {
+	if r.Method == http.MethodPost {
+		fmt.Println("I am posting")
 		var newLog Log
 		if err := json.NewDecoder(r.Body).Decode(&newLog); err != nil {
 			return err
@@ -55,11 +57,10 @@ func (s *Server) RegisterHandler(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) GetAllHandler(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == http.MethodGet {
 		allLog, err := s.dbServices.List()
+		fmt.Println(allLog)
 		if err != nil {
-			allLogError := &errorApiHandle{
-				Error: errors.New("error in finding all logs"),
-			}
-			return writeJsonHeader(w, http.StatusBadGateway, allLogError)
+			fmt.Println("This error is for GettAll Handler")
+			return err
 		}
 		return writeJsonHeader(w, http.StatusOK, allLog)
 	}

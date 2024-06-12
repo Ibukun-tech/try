@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/Ibukun-tech/try"
@@ -26,29 +25,27 @@ var handle http.Handler
 //			next.ServeHTTP(w, r)
 //		}
 //	}
-func init() {
+
+// The server is invoked and started
+func main() {
 	fmt.Println("first run")
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
 	defer func() {
 		cancel()
 	}()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://ibk:secret@localhost:2017"))
-	fmt.Println(err)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://ibk:secret@localhost:27017"))
+	fmt.Println(err, "why the error")
 	if err != nil {
 		fmt.Println(err, "if there is error ")
-		os.Exit(1)
+		log.Fatal(err)
 	}
 	conn := try.NewMongoClient(client)
 	s := try.NewServer(conn)
 	m := mux.NewRouter()
-	m.HandleFunc("/", try.RunHandler(s.RegisterHandler))
+	m.HandleFunc("/add", try.RunHandler(s.RegisterHandler))
 	m.HandleFunc("/getAll", try.RunHandler(s.GetAllHandler))
 	handle = m
-}
-
-// The server is invoked and started
-func main() {
-
 	serve := &http.Server{
 		Addr:    ":4000",
 		Handler: handle,

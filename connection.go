@@ -2,6 +2,7 @@ package try
 
 import (
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -26,8 +27,10 @@ func NewMongoClient(cl *mongo.Client) *MongoDbConnection {
 }
 
 func (m *MongoDbConnection) Add(dataLog Log) (string, error) {
+	fmt.Println(dataLog)
 	collection := m.client.Database(db_name).Collection(db_collection_name)
 	_, err := collection.InsertOne(context.Background(), dataLog)
+
 	if err != nil {
 		return "", err
 	}

@@ -1,6 +1,8 @@
 .PHONY:  all build and run
 Bin=Bin
 
+start:
+	go run  $(run).go
 first:
 	 @echo "first running ......."
 convert:
@@ -17,3 +19,6 @@ up:
 down:
 	@echo "shutting docker ......"
 	Docker-compose down
+migrate:
+	@echo "Sending default data to database ......"
+	go run ./Populate/main.go

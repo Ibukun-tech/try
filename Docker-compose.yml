@@ -5,7 +5,15 @@ services:
     container_name: MongoDb
     restart: always
     ports:
-      - 2017:2017
+      - 27017:27017
     environment:
       - MONGO_INITDB_ROOT_USERNAME=ibk
       - MONGO_INITDB_ROOT_PASSWORD=secret
+  # app:
+  #   build: .
+  #   container_name: myApp
+  #   restart: always
+  #   ports:
+  #     - 4000:4000
+  #   depends_on:
+  #     - Database
